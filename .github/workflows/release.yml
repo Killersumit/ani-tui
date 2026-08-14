@@ -118,7 +118,7 @@ jobs:
           [[ "$(find release -maxdepth 1 -type f -name 'ani-tui-*' | wc -l)" -eq 7 ]]
 
       - name: Attest native binaries
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: release/ani-tui-*
 
