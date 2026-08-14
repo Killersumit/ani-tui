@@ -10,6 +10,7 @@ A full-screen, keyboard-first terminal frontend for [`pystardust/ani-cli`](https
 `ani-tui` does **not** fork ani-cli's scraping or playback logic. It runs the installed `ani-cli` script unchanged and replaces its `fzf`/rofi/dmenu prompts with native in-app selectors. Search results, seasons, episodes, qualities, and post-play actions stay inside one cohesive TUI.
 
 ## Highlights
+## !!THERE ARE SOME ERROR SO DONT INSTALL YET, BUT U CAN STILL DOWNLOAD THE THIS REPO TO TEST!!
 
 - Full-screen alternate-buffer interface built with Bubble Tea and Lip Gloss
 - Search, continue watching, watch history, and backend activity screens
