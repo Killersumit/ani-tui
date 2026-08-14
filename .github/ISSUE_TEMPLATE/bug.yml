@@ -1,0 +1,57 @@
+name: Bug report
+description: Report a reproducible ani-tui defect
+title: "[Bug]: "
+labels: [bug, triage]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve ani-tui. Please remove private paths, tokens, and media URLs from logs.
+  - type: input
+    id: version
+    attributes:
+      label: ani-tui version
+      description: Output of `ani-tui --version`.
+    validations:
+      required: true
+  - type: input
+    id: ani-cli
+    attributes:
+      label: ani-cli version
+      description: Output of `ani-cli --version`.
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options: [Linux, macOS, Windows, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      placeholder: Tell us exactly what you ran and selected.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and sanitized Activity output
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I reproduced this with a current ani-cli installation.
+          required: true
+        - label: I searched existing issues and removed secrets/private media URLs.
+          required: true

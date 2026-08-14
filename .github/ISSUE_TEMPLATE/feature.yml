@@ -1,0 +1,33 @@
+name: Feature request
+description: Suggest an improvement to the ani-cli TUI frontend
+title: "[Feature]: "
+labels: [enhancement, triage]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or workflow
+      description: What is difficult today, and which ani-cli capability is involved?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed TUI behavior
+      description: Explain how this should fit the persistent workspace rather than adding successive popups.
+    validations:
+      required: true
+  - type: textarea
+    id: upstream
+    attributes:
+      label: Upstream ani-cli behavior
+      description: Link to relevant ani-cli documentation or explain the existing command/menu behavior.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: This proposal keeps scraping and playback logic in upstream ani-cli.
+          required: true
+        - label: I searched existing issues and requests.
+          required: true

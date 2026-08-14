@@ -1,0 +1,157 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  go:
+    name: Go quality and security
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Check formatting
+        shell: bash
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [[ -n "$unformatted" ]]; then
+            printf 'The following files need gofmt:\n%s\n' "$unformatted" >&2
+            exit 1
+          fi
+      - name: Test with race detector
+        run: go test -race ./...
+      - name: Vet
+        run: go vet ./...
+      - name: Staticcheck
+        run: go run honnef.co/go/tools/cmd/staticcheck@v0.7.0 ./...
+      - name: Reachable vulnerability scan
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.7.0 ./...
+
+  distribution:
+    name: Installers and shell
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: npm/package.json
+      - name: ShellCheck
+        run: npx --yes shellcheck@4.1.0 install.sh uninstall.sh scripts/*.sh
+      - name: Distribution regression
+        run: ./scripts/test-distribution.sh
+      - name: Interactive installer PTY regression
+        run: python3 ./scripts/test-installer-pty.py
+
+  npm:
+    name: npm / Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    defaults:
+      run:
+        working-directory: npm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: npm/package.json
+      - name: Test package
+        run: npm test
+      - name: Verify exact package contents
+        shell: bash
+        run: |
+          npm pack --dry-run --ignore-scripts --json > "$RUNNER_TEMP/ani-tui-pack.json"
+          node - "$RUNNER_TEMP/ani-tui-pack.json" <<'NODE'
+          const fs = require('node:fs');
+          const report = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))[0];
+          const actual = report.files.map((entry) => entry.path).sort();
+          const expected = [
+            'LICENSE',
+            'README.md',
+            'bin/ani-tui.js',
+            'lib/platform.js',
+            'package.json',
+            'scripts/install.js',
+          ].sort();
+          if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+            throw new Error(`unexpected npm files: ${JSON.stringify(actual)}`);
+          }
+          NODE
+
+  targets:
+    name: Build ${{ matrix.os }}/${{ matrix.arch }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: linux
+            arch: amd64
+            asset: linux-x64
+          - os: linux
+            arch: arm64
+            asset: linux-arm64
+          - os: linux
+            arch: arm
+            goarm: "7"
+            asset: linux-armv7
+          - os: darwin
+            arch: amd64
+            asset: darwin-x64
+          - os: darwin
+            arch: arm64
+            asset: darwin-arm64
+          - os: windows
+            arch: amd64
+            suffix: .exe
+            asset: windows-x64
+          - os: windows
+            arch: arm64
+            suffix: .exe
+            asset: windows-arm64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Compile target
+        shell: bash
+        env:
+          GOOS: ${{ matrix.os }}
+          GOARCH: ${{ matrix.arch }}
+          GOARM: ${{ matrix.goarm }}
+          CGO_ENABLED: "0"
+        run: go build -trimpath -o "$RUNNER_TEMP/ani-tui-${{ matrix.asset }}${{ matrix.suffix }}" .
+
+  workflow-lint:
+    name: GitHub Actions syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.26.6
+          cache: false
+      - name: Actionlint
+        run: go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12 .github/workflows/*.yml

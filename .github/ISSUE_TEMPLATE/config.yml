@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Support and troubleshooting
+    url: https://github.com/Killersumit/ani-tui/blob/main/SUPPORT.md
+    about: Read setup help and learn where to ask usage questions.
+  - name: Security vulnerability
+    url: https://github.com/Killersumit/ani-tui/security/advisories/new
+    about: Report security issues privately; do not open a public issue.

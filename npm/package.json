@@ -1,0 +1,55 @@
+{
+  "name": "ani-tui",
+  "version": "0.1.0",
+  "description": "A polished full-screen terminal interface for pystardust/ani-cli",
+  "license": "MIT",
+  "author": "Sumit Singh (https://github.com/Killersumit)",
+  "homepage": "https://github.com/Killersumit/ani-tui#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Killersumit/ani-tui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Killersumit/ani-tui/issues"
+  },
+  "keywords": [
+    "ani-cli",
+    "anime",
+    "terminal",
+    "tui",
+    "bubbletea"
+  ],
+  "bin": {
+    "ani-tui": "bin/ani-tui.js"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "scripts/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "postinstall": "node scripts/install.js",
+    "test": "node --test test/*.test.js",
+    "prepack": "npm test"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "os": [
+    "linux",
+    "darwin",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64",
+    "arm"
+  ],
+  "preferGlobal": true,
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}
