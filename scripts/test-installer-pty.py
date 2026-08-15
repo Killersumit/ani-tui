@@ -145,9 +145,45 @@ def main() -> None:
                 "repeat install offered an already configured PATH update\n"
                 f"profile={profile!r}\n{second_rendered}"
             )
+
+        # Fish does not source ~/.profile and uses different PATH syntax. Verify
+        # that the same curl-piped installer writes its native configuration.
+        env["SHELL"] = "/usr/bin/fish"
+        fish_returncode, fish_rendered = run_installer()
+        fish_profile_path = fixture / "home" / ".config" / "fish" / "config.fish"
+        fish_marker = "Updated   " + str(fish_profile_path)
+        if fish_returncode != 0 or fish_marker not in fish_rendered:
+            raise RuntimeError(
+                f"fish installer status={fish_returncode}, missing={fish_marker!r}\n"
+                f"{fish_rendered}"
+            )
+        fish_profile = fish_profile_path.read_text(encoding="utf-8")
+        fish_path_line = f"fish_add_path --global --prepend '{installed.parent}'"
+        if fish_profile.count(fish_path_line) != 1:
+            raise RuntimeError(
+                f"fish profile does not contain one safe PATH update: {fish_profile!r}"
+            )
+
+        second_fish_returncode, second_fish_rendered = run_installer()
+        if second_fish_returncode != 0:
+            raise RuntimeError(
+                f"repeat fish installer status={second_fish_returncode}\n"
+                f"{second_fish_rendered}"
+            )
+        fish_profile = fish_profile_path.read_text(encoding="utf-8")
+        if fish_profile.count(fish_path_line) != 1:
+            raise RuntimeError(
+                f"repeat fish install duplicated the PATH update: {fish_profile!r}"
+            )
+        if "to your shell PATH?" in second_fish_rendered:
+            raise RuntimeError(
+                "repeat fish install offered an already configured PATH update\n"
+                f"profile={fish_profile!r}\n{second_fish_rendered}"
+            )
+
         print(
             "interactive installer PTY passed all five rendered steps, permissions, "
-            "and idempotent PATH update"
+            "and idempotent Bash/Fish PATH updates"
         )
     finally:
         shutil.rmtree(fixture, ignore_errors=True)

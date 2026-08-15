@@ -195,8 +195,18 @@ fi
 
 step 2 "Downloading the ${VERSION} release"
 say "  Asset     $ASSET"
-download "$DOWNLOAD_BASE/$ASSET" "$TMP_DIR/$ASSET" || fail "download failed: $DOWNLOAD_BASE/$ASSET"
-download "$DOWNLOAD_BASE/$CHECKSUMS" "$TMP_DIR/$CHECKSUMS" || fail "could not download release checksums"
+if ! download "$DOWNLOAD_BASE/$ASSET" "$TMP_DIR/$ASSET"; then
+    if [ "$DOWNLOAD_BASE" = "$DEFAULT_BASE" ]; then
+        fail "release asset unavailable: $ASSET. No binary was installed. The maintainer must publish the requested GitHub Release first."
+    fi
+    fail "download failed: $DOWNLOAD_BASE/$ASSET"
+fi
+if ! download "$DOWNLOAD_BASE/$CHECKSUMS" "$TMP_DIR/$CHECKSUMS"; then
+    if [ "$DOWNLOAD_BASE" = "$DEFAULT_BASE" ]; then
+        fail "checksums.txt is missing from the requested GitHub Release; no binary was installed"
+    fi
+    fail "could not download release checksums"
+fi
 
 step 3 "Verifying SHA-256 checksum"
 EXPECTED=$(awk -v file="$ASSET" '$2 == file || $2 == ("*" file) { print $1; exit }' "$TMP_DIR/$CHECKSUMS")
@@ -268,18 +278,31 @@ quote_for_shell() {
 
 PATH_NOTE=
 if ! path_has_dir "$INSTALL_DIR"; then
+    shell_name=$(basename "${SHELL:-sh}")
     QUOTED_INSTALL_DIR=$(quote_for_shell "$INSTALL_DIR")
-    PATH_LINE="export PATH=$QUOTED_INSTALL_DIR:\"\$PATH\""
+    case "$shell_name" in
+        fish)
+            PATH_LINE="fish_add_path --global --prepend $QUOTED_INSTALL_DIR"
+            PROFILE="$HOME/.config/fish/config.fish"
+            ;;
+        zsh)
+            PATH_LINE="export PATH=$QUOTED_INSTALL_DIR:\"\$PATH\""
+            PROFILE="$HOME/.zshrc"
+            ;;
+        bash)
+            PATH_LINE="export PATH=$QUOTED_INSTALL_DIR:\"\$PATH\""
+            PROFILE="$HOME/.bashrc"
+            ;;
+        *)
+            PATH_LINE="export PATH=$QUOTED_INSTALL_DIR:\"\$PATH\""
+            PROFILE="$HOME/.profile"
+            ;;
+    esac
     PATH_NOTE="Run this now, or open a new terminal: $PATH_LINE"
     if [ "$INTERACTIVE" = 1 ] && [ "$MODIFY_PATH" = 1 ] && [ "$SYSTEM_INSTALL" = 0 ]; then
-        shell_name=$(basename "${SHELL:-sh}")
-        case "$shell_name" in
-            zsh) PROFILE="$HOME/.zshrc" ;;
-            bash) PROFILE="$HOME/.bashrc" ;;
-            *) PROFILE="$HOME/.profile" ;;
-        esac
         if { [ ! -f "$PROFILE" ] || ! grep -F "$PATH_LINE" "$PROFILE" >/dev/null 2>&1; } &&
             prompt_yes_no "  Add $INSTALL_DIR to your shell PATH?" yes; then
+            mkdir -p "$(dirname "$PROFILE")"
             {
                 printf '\n# Added by the ani-tui installer\n'
                 printf '%s\n' "$PATH_LINE"

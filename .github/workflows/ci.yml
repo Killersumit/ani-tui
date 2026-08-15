@@ -54,7 +54,9 @@ jobs:
       - name: ShellCheck
         run: npx --yes shellcheck@4.1.0 install.sh uninstall.sh scripts/*.sh
       - name: Distribution regression
-        run: ./scripts/test-distribution.sh
+        # Invoke through sh so archive/API uploads that lose Git executable bits
+        # cannot turn this validation into an unrelated exit-126 failure.
+        run: sh ./scripts/test-distribution.sh
       - name: Interactive installer PTY regression
         run: python3 ./scripts/test-installer-pty.py
 

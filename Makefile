@@ -32,7 +32,7 @@ uninstall:
 	rm -f "$(DESTDIR)$(BINDIR)/$(APP)"
 
 release:
-	VERSION=$(VERSION) ./scripts/build-release.sh
+	VERSION=$(VERSION) sh ./scripts/build-release.sh
 
 clean:
 	rm -f $(APP)

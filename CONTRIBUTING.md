@@ -16,7 +16,7 @@ Requirements: Go 1.25.10 or newer, Node 22 or newer for npm-package tests, and P
 git clone https://github.com/Killersumit/ani-tui.git
 cd ani-tui
 make check
-./scripts/test-distribution.sh
+sh ./scripts/test-distribution.sh
 (cd npm && npm test)
 ```
 
@@ -45,7 +45,7 @@ go test -race ./...
 go vet ./...
 go run honnef.co/go/tools/cmd/staticcheck@v0.7.0 ./...
 shellcheck install.sh uninstall.sh scripts/*.sh
-./scripts/test-distribution.sh
+sh ./scripts/test-distribution.sh
 python3 ./scripts/test-installer-pty.py
 (cd npm && npm test && npm pack --dry-run --ignore-scripts)
 ```

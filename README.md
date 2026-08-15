@@ -237,7 +237,7 @@ See [`docs/research-and-architecture.md`](docs/research-and-architecture.md) for
 ```sh
 make check
 go run honnef.co/go/tools/cmd/staticcheck@v0.7.0 ./...
-./scripts/test-distribution.sh
+sh ./scripts/test-distribution.sh
 python3 ./scripts/test-installer-pty.py
 (cd npm && npm test && npm pack --dry-run --ignore-scripts)
 ```

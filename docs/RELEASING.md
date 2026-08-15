@@ -5,7 +5,7 @@ Releases are tag-driven. A valid `vMAJOR.MINOR.PATCH` tag runs tests, builds all
 ## One-time repository setup
 
 1. Enable GitHub Actions with read/write workflow permissions.
-2. Add an Actions secret named `NPM_TOKEN` using an npm automation token authorized to publish the unscoped `ani-tui` package.
+2. For the first npm publication, add an Actions secret named `NPM_TOKEN` containing a short-lived npm granular access token with **Read and write** and **Bypass 2FA** enabled. Legacy/automation tokens are not supported. After the package exists, migrate to npm trusted publishing before removing this secret.
 3. Keep GitHub's artifact attestations enabled for the public repository.
 4. Protect `main` and require the **CI** workflow before merging.
 
@@ -18,10 +18,10 @@ Releases are tag-driven. A valid `vMAJOR.MINOR.PATCH` tag runs tests, builds all
    make check
    go run honnef.co/go/tools/cmd/staticcheck@v0.7.0 ./...
    shellcheck install.sh uninstall.sh scripts/*.sh
-   ./scripts/test-distribution.sh
+   sh ./scripts/test-distribution.sh
    python3 ./scripts/test-installer-pty.py
    (cd npm && npm test && npm pack --dry-run --ignore-scripts)
-   VERSION=v0.1.0 ./scripts/build-release.sh
+   VERSION=v0.1.0 sh ./scripts/build-release.sh
    ./release/ani-tui-linux-x64 --version
    ```
 

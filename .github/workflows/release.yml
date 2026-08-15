@@ -87,7 +87,7 @@ jobs:
       - name: Distribution preflight
         run: |
           npx --yes shellcheck@4.1.0 install.sh uninstall.sh scripts/*.sh
-          ./scripts/test-distribution.sh
+          sh ./scripts/test-distribution.sh
           python3 ./scripts/test-installer-pty.py
       - name: npm preflight
         working-directory: npm
@@ -100,7 +100,7 @@ jobs:
           VERSION: ${{ steps.release.outputs.tag }}
           COMMIT: ${{ steps.release.outputs.commit }}
           BUILD_DATE: ${{ steps.release.outputs.build_date }}
-        run: ./scripts/build-release.sh
+        run: sh ./scripts/build-release.sh
 
       - name: Verify host artifact metadata and checksums
         shell: bash
