@@ -10,13 +10,13 @@ A full-screen, keyboard-first interface for [`pystardust/ani-cli`](https://githu
 
 ## Screenshots
 
-Screenshot space is ready in [`docs/images`](docs/images/README.md).
+### Overview
 
-Suggested files:
+![ani-tui overview](docs/images/overview.png)
 
-- `docs/images/overview.png`
-- `docs/images/playback-controls.png`
-- `docs/images/dependency-doctor.png`
+### Playback controls
+
+![ani-tui playback controls](docs/images/playback-controls.png)
 
 ## Highlights
 
