@@ -19,7 +19,7 @@ jobs:
     name: Go quality and security
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
@@ -45,7 +45,7 @@ jobs:
     name: Installers and shell
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -71,7 +71,7 @@ jobs:
       run:
         working-directory: npm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
@@ -132,7 +132,7 @@ jobs:
             suffix: .exe
             asset: windows-arm64
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
@@ -150,7 +150,7 @@ jobs:
     name: GitHub Actions syntax
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
         with:
           go-version: 1.26.6
