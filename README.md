@@ -18,8 +18,6 @@ Suggested files:
 - `docs/images/playback-controls.png`
 - `docs/images/dependency-doctor.png`
 
-Upload the images there and they can be displayed in this section.
-
 ## Highlights
 
 - Persistent full-screen split-pane layout
