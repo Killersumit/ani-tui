@@ -1,13 +1,13 @@
 module github.com/Killersumit/ani-tui
 
-go 1.25.10
+go 1.26.0
 
 require (
 	github.com/charmbracelet/bubbles v0.21.0
 	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/charmbracelet/x/ansi v0.10.1
-	golang.org/x/sys v0.44.0
+	golang.org/x/sys v0.48.0
 )
 
 require (
